@@ -1,0 +1,10 @@
+name = "ai-smart-tutor-api"
+main = "worker.js"
+compatibility_date = "2026-11-16"
+
+[vars]
+# Set this to the exact HTTPS GitHub Pages origin, without a trailing slash.
+# Example: https://YOUR-USERNAME.github.io
+ALLOWED_ORIGIN = "https://YOUR-USERNAME.github.io"
+# Optional; can also be set as a Worker variable.
+OPENAI_MODEL = "gpt-5.5"

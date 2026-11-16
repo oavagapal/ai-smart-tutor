@@ -1,0 +1,12 @@
+{
+  "name": "AI Smart Tutor",
+  "short_name": "Smart Tutor",
+  "description": "A chapter-based virtual classroom with a cartoon teacher and interactive whiteboard.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f7fc",
+  "theme_color": "#243b73",
+  "icons": []
+}

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#243b73">
+  <meta name="description" content="AI Smart Tutor — your chapter-based virtual classroom.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <title>AI Smart Tutor</title>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="AI Smart Tutor home"><span class="brand-icon">✦</span><span>AI Smart Tutor</span></a>
+    <span class="session-pill"><i></i> Session only · Not saved</span>
+  </header>
+
+  <main>
+    <section class="welcome" id="setup">
+      <div class="welcome-copy">
+        <p class="eyebrow">YOUR PERSONAL VIRTUAL CLASSROOM</p>
+        <h1>Learn one chapter<br><span>at a time.</span></h1>
+        <p class="subtext">Choose a subject and chapter. Your cartoon teacher will stay beside the whiteboard throughout your lesson.</p>
+      </div>
+      <div class="setup-card">
+        <label for="subject">Choose subject</label>
+        <select id="subject">
+          <option>Science</option><option>Mathematics</option><option>Social Studies</option>
+          <option>English</option><option>Hindi</option><option>Odia</option><option>Other</option>
+        </select>
+        <label for="chapter">Chapter name</label>
+        <input id="chapter" placeholder="e.g. The Invisible Living World" maxlength="100">
+        <label for="apiEndpoint">AI service URL (set up by project administrator)</label>
+        <input id="apiEndpoint" type="url" placeholder="https://your-worker.workers.dev" inputmode="url">
+        <p class="tiny-note">The AI service URL is kept only in this open page session. Do not paste an API key here.</p>
+        <label class="consent-row"><input id="aiConsent" type="checkbox"> I understand that when I use AI, my question and the selected chapter text may be sent to the AI provider to generate an answer.</label>
+        <label for="chapterText">Chapter material (optional)</label>
+        <textarea id="chapterText" rows="3" placeholder="Paste a short section or your chapter notes here…"></textarea>
+        <div class="setup-actions">
+          <button class="primary" id="startLesson">Enter classroom <span>→</span></button>
+          <label class="upload-button" for="chapterFile">＋ Choose PDF / text file</label>
+          <input id="chapterFile" type="file" accept=".txt,.md,.pdf" hidden>
+        </div>
+        <p class="tiny-note" id="fileNote">PDFs and text files are read on this device for this session. Chapter text is sent to the AI service only after you enable the consent checkbox and ask for AI help.</p>
+      </div>
+    </section>
+
+    <section class="classroom hidden" id="classroom">
+      <div class="classroom-heading">
+        <div><p class="eyebrow">LIVE LEARNING SESSION</p><h2 id="lessonTitle">Science · Your chapter</h2></div>
+        <button class="quiet-button" id="changeChapter">← Change chapter</button>
+      </div>
+
+      <div class="class-layout">
+        <aside class="teacher-panel">
+          <div class="teacher-status"><span class="live-dot"></span> YOUR AI TEACHER</div>
+          <div class="teacher-stage">
+            <div class="speech-bubble" id="speechBubble">Hello! Ready to learn together?</div>
+            <div class="cartoon-teacher" id="teacher" aria-label="Friendly cartoon teacher">
+              <div class="teacher-hair"></div>
+              <div class="teacher-head">
+                <div class="hair-fringe"></div>
+                <div class="eyes"><i></i><i></i></div>
+                <div class="nose"></div><div class="smile"></div>
+              </div>
+              <div class="teacher-neck"></div>
+              <div class="teacher-body"><div class="shirt-line"></div><div class="tie"></div></div>
+              <div class="teacher-arm arm-left"></div><div class="teacher-arm arm-right"></div>
+            </div>
+            <div class="teacher-ground"></div>
+          </div>
+          <div class="teacher-caption"><strong>Professor Nova</strong><span>Friendly learning guide</span></div>
+          <div class="voice-controls">
+            <button class="secondary" id="speakLast" title="Speak the teacher's last message">🔊 Speak</button>
+            <button class="secondary" id="stopVoice" title="Stop speaking">■ Stop</button>
+          </div>
+          <p class="tiny-note">Voice uses your device's available speech voice.</p>
+        </aside>
+
+        <section class="board-panel">
+          <div class="board-toolbar">
+            <div><span class="board-dot"></span><strong>Interactive whiteboard</strong></div>
+            <button class="board-clear" id="clearBoard">Clear board</button>
+          </div>
+          <div class="whiteboard" id="whiteboard" aria-live="polite">
+            <div class="board-welcome"><span class="board-star">✦</span><h3>Welcome to the lesson!</h3><p>Your teacher's explanations and key points will appear here.</p></div>
+          </div>
+          <div class="mode-tabs" role="group" aria-label="Learning mode">
+            <button class="mode active" data-mode="study">📖 Study</button>
+            <button class="mode" data-mode="explain">🎓 Explain</button>
+            <button class="mode" data-mode="qa">❓ Q&A</button>
+            <button class="mode" data-mode="practice">✍️ Practice</button>
+            <button class="mode" data-mode="test">📝 Test</button>
+          </div>
+          <div class="chat-area">
+            <div class="chat-log" id="chatLog"><div class="message teacher-message">Choose a learning mode or ask me a question to begin.</div></div>
+            <div class="composer">
+              <button class="mic-button" id="micButton" title="Speak your question" aria-label="Speak your question">🎙</button>
+              <input id="questionInput" placeholder="Ask your teacher a question…" autocomplete="off">
+              <button class="send-button" id="sendQuestion">Send ↑</button>
+            </div>
+            <p class="tiny-note" id="voiceNote">Microphone input depends on browser support and permission. You can always type.</p>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer><span>AI SMART TUTOR</span><span>Learn · Understand · Practise</span></footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" referrerpolicy="no-referrer"></script>
+  <script src="app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+      window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+    }
+  </script>
+</body>
+</html>
