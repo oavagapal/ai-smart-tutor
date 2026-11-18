@@ -10,10 +10,49 @@ function setTeacher(message, speak = false) {
   $("speechBubble").textContent = message.length > 115 ? message.slice(0,112) + "…" : message;
   if (speak) speakText(message);
 }
+
 function speakText(text) {
   if (!("speechSynthesis" in window)) {
-    $("voiceNote").textContent = "Speech synthesis is not supported by this browser.";
+    $("voiceNote").textContent =
+      "Speech synthesis is not supported by this browser.";
     return;
+  }
+
+  // Clean Markdown before speaking
+  const cleanText = String(text)
+    .replace(/^#{1,6}\s*/gm, "")
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/\*(.*?)\*/g, "$1")
+    .replace(/__(.*?)__/g, "$1")
+    .replace(/_(.*?)_/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/^\s*[-*+]\s+/gm, "")
+    .replace(/^\s*\d+\.\s+/gm, "")
+    .replace(/<[^>]*>/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!cleanText) return;
+
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(cleanText);
+  utterance.lang = "en-IN";
+  utterance.rate = 0.96;
+
+  utterance.onstart = () =>
+    $("teacher").classList.add("teacher-speaking");
+
+  utterance.onend = () =>
+    $("teacher").classList.remove("teacher-speaking");
+
+  utterance.onerror = () =>
+    $("teacher").classList.remove("teacher-speaking");
+
+  window.speechSynthesis.speak(utterance);
+}
+
   }
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
