@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Professor Nova AI Test</title>
+</head>
+<body>
+  <h2>Professor Nova — AI Test</h2>
+
+  <textarea id="question" rows="4" style="width:100%"
+    placeholder="Ask a Class 8 question..."></textarea>
+
+  <p>
+    <button id="send">Ask Professor Nova</button>
+  </p>
+
+  <p id="status">Ready</p>
+  <pre id="answer" style="white-space:pre-wrap"></pre>
+
+  <script>
+    const workerURL =
+      "https://round-unit-5aec.anshuverse314.workers.dev/";
+
+    document.getElementById("send").onclick = async () => {
+      const question =
+        document.getElementById("question").value.trim();
+
+      const status = document.getElementById("status");
+      const answer = document.getElementById("answer");
+
+      if (!question) {
+        status.textContent = "Please enter a question.";
+        return;
+      }
+
+      status.textContent = "Professor Nova is thinking...";
+      answer.textContent = "";
+
+      try {
+        const response = await fetch(workerURL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message: question })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Request failed");
+        }
+
+        answer.textContent = data.answer || "No answer received.";
+        status.textContent = "Response received!";
+      } catch (error) {
+        status.textContent = "Error: " + error.message;
+      }
+    };
+  </script>
+</body>
+</html>
